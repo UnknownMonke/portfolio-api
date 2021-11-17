@@ -6,6 +6,8 @@ const express = require('express'),
   mongoose = require('mongoose'),
   config = require('./db');
 
+const geographyRoutes = require('./routes/geography.route');
+
 mongoose.Promise = global.Promise;
 mongoose
   .connect(config.DB, { useNewUrlParser: true })
@@ -17,6 +19,9 @@ mongoose
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use('/api/geography', geographyRoutes);
+
 let port = process.env.PORT || 4000;
 
 const server = app.listen(function(){
