@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const geographyRoutes = express.Router();
 
 //import du modèle
@@ -8,6 +7,8 @@ let Geography = require('../models/geography');
 //l'entrée de l'API est relative au préfixe global défini dans le server.js
 geographyRoutes.route('/add')
   .post(function(request, response) {
+    console.log(request);
+
     let geography = new Geography(request.body);
 
     geography.save() //persistence
@@ -21,6 +22,7 @@ geographyRoutes.route('/add')
 
 geographyRoutes.route('/get')
   .get(function(request, response) {
+    console.log(request);
     Geography.find(function(error, geographies) {
       if(error) {
         console.log(error);
@@ -32,7 +34,8 @@ geographyRoutes.route('/get')
 
 geographyRoutes.route('/update/:id')
   .post(function (request, response) {
-    Geography.findById(request.params.id, function(error, geography) {
+    console.log(request);
+    Geography.findById({_id: request.params.id}, function(error, geography) {
       if(error) {
         console.log(error);
       } else if(!geography) {
@@ -53,6 +56,7 @@ geographyRoutes.route('/update/:id')
 
 geographyRoutes.route('/delete/:id')
   .get(function (request, response) {
+    console.log(request);
     Geography.findByIdAndRemove({_id: request.params.id}, function(error, geography){
         if(error) response.json(error);
         else response.json('Successfully removed');

@@ -1,5 +1,5 @@
 /*------configuration principale du serveur------*/
-const express = require('express'),
+const express = require('express');
   path = require('path'),
   bodyParser = require('body-parser'),
   cors = require('cors'),
@@ -22,8 +22,8 @@ app.use(cors());
 
 app.use('/api/geography', geographyRoutes);
 
-let port = process.env.PORT || 4000;
+const port = process.env.PORT || 4000;
 
-const server = app.listen(function(){
+app.listen(port, () => {
   console.log('Listening on port ' + port);
 });

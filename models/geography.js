@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-//entité
+//entité. L'id est autogénérée
 let Geography = new Schema({
-  id: {type: Number},
-  name: {type: String}
+  name: { type: String }
 },{
   collection: 'Geography'
 });
