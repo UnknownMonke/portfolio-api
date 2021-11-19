@@ -1,65 +1,65 @@
 const express = require('express');
 const geographyRoutes = express.Router();
 
-//import du modèle
+// Import du modèle
 let Geography = require('../models/geography');
 
-//l'entrée de l'API est relative au préfixe global défini dans le server.js
+// L'entrée de l'API est relative au préfixe global défini dans le server.js
 geographyRoutes.route('/add')
-  .post(function(request, response) {
-    console.log(request);
+  .post(function(req, res) {
+    let geography = new Geography(req.body);
 
-    let geography = new Geography(request.body);
-
-    geography.save() //persistence
+    geography.save() // Persistence
       .then(geography => {
-        response.status(200).json({'Geography': 'Geography has been saved successfully'});
+        res.status(200).json(geography);
       })
       .catch(error => {
-        response.status(400).send("unable to save to database");
+        res.status(400).send("unable to save to database");
       })
   });
 
 geographyRoutes.route('/get')
-  .get(function(request, response) {
-    console.log(request);
+  .get(function(req, res) {
     Geography.find(function(error, geographies) {
       if(error) {
         console.log(error);
       } else {
-        response.json(geographies);
+        res.json(geographies);
       }
     })
   });
 
 geographyRoutes.route('/update/:id')
-  .post(function (request, response) {
-    console.log(request);
-    Geography.findById({_id: request.params.id}, function(error, geography) {
+  .post(function (req, res) {
+    Geography.findById(req.params.id, function(error, geography) { // id = paramètre de la requête et non id contenue dans le body
       if(error) {
         console.log(error);
+        res.status(500).json(error);
       } else if(!geography) {
-        response.status(404).send("Record not found");
+        res.status(404).send("Record not found");
       } else {
-        //update
-        geography.name = request.body.name;
+        // Update
+        geography.name = req.body.name;
 
         geography.save().then(geography => {
-          response.json('Update complete');
+          res.status(200).json('Update complete');
         })
         .catch(error => {
-          response.status(400).send("unable to update the database");
+          res.status(400).send("unable to update the database");
         });
       }
     });
   });
 
 geographyRoutes.route('/delete/:id')
-  .get(function (request, response) {
-    console.log(request);
-    Geography.findByIdAndRemove({_id: request.params.id}, function(error, geography){
-        if(error) response.json(error);
-        else response.json('Successfully removed');
+  .delete(function (req, res) {
+    Geography.findByIdAndRemove({ _id: req.params.id }, function(error, geography){
+        if(error) {
+          console.log(error);
+          res.status(500).json(error);
+        } else {
+          res.status(200).json('Successfully removed');
+        }
     });
   });
 
