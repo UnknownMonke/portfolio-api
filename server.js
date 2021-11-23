@@ -7,6 +7,7 @@ const express = require('express');
   config = require('./db');
 
 const geographyRoutes = require('./routes/geography.route');
+const sectorRoutes = require('./routes/sector.route');
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/api/geography', geographyRoutes);
+app.use('/api/sector', sectorRoutes);
 
 const port = process.env.PORT || 4000;
 

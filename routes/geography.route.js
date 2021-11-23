@@ -5,6 +5,17 @@ const geographyRoutes = express.Router();
 let Geography = require('../models/geography');
 
 // L'entrée de l'API est relative au préfixe global défini dans le server.js
+geographyRoutes.route('/get')
+  .get(function(req, res) {
+    Geography.find(function(error, geographies) {
+      if(error) {
+        console.log(error);
+      } else {
+        res.json(geographies);
+      }
+    })
+  });
+
 geographyRoutes.route('/add')
   .post(function(req, res) {
     let geography = new Geography(req.body);
@@ -16,17 +27,6 @@ geographyRoutes.route('/add')
       .catch(error => {
         res.status(400).send("unable to save to database");
       })
-  });
-
-geographyRoutes.route('/get')
-  .get(function(req, res) {
-    Geography.find(function(error, geographies) {
-      if(error) {
-        console.log(error);
-      } else {
-        res.json(geographies);
-      }
-    })
   });
 
 geographyRoutes.route('/update/:id')
