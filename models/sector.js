@@ -13,8 +13,13 @@ let Sector = new Schema({
 });
 
 // Création du counter
-const initCounter = new Counter({_id: 'sectorId', value: 1});
-initCounter.save()
-  .catch(error => console.log('error saving the counter'))
+Counter.findById('sectorId', function(err, res) {
+  if(res === null) {
+    const initCounter = new Counter({_id: 'sectorId', value: 0});
+    initCounter.save()
+      .then(res => console.log('counter created'))
+      .catch(error => console.log(error));
+  }
+});
 
 module.exports = mongoose.model('Sector', Sector);

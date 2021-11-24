@@ -20,20 +20,25 @@ sectorRoutes.route('/get')
 // Ajout secteur majeur ou mineur
 sectorRoutes.route('/add')
   .post(function(req, res) {
-    let sector = new Sector({
-      _id: getNextCounterValue(),
-      name: req.body.name,
-      level: req.body.level,
-      parentId: req.body.parentId,
-    });
 
-    sector.save() // Persistence
-      .then(sector => {
-        res.status(200).json(sector);
-      })
-      .catch(error => {
-        res.status(400).send("unable to save to database");
-      })
+    Counter.findByIdAndUpdate('sectorId', { $inc: { value: 1 } }, { new: 'true' })
+      .then(result => {
+        const sector = new Sector({
+          _id: result.value,
+          name: req.body.name,
+          level: req.body.level,
+          parentId: req.body.parentId,
+        });
+
+        sector.save() // Persistence
+          .then(sector => {
+            res.status(200).json(sector);
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(400).send("unable to save to database");
+          });
+      });
   });
 
 sectorRoutes.route('/update/:id')
@@ -48,12 +53,14 @@ sectorRoutes.route('/update/:id')
         // Update
         sector.name = req.body.name;
 
-        sector.save().then(sector => {
-          res.status(200).json('Update complete');
-        })
-        .catch(error => {
-          res.status(400).send("unable to update the database");
-        });
+        sector.save()
+          .then(sector => {
+            res.status(200).json('Update complete');
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(400).send("unable to update the database");
+          });
       }
     });
   });
@@ -69,9 +76,5 @@ sectorRoutes.route('/delete/:id')
         }
     });
   });
-
-function getNextCounterValue() {
-  return Counter.findByIdAndUpdate('sectorId', { $inc: { value: 1 } }, { returnDocument: 'after' }).value;
-}
 
 module.exports = sectorRoutes;

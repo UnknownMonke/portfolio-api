@@ -25,6 +25,7 @@ geographyRoutes.route('/add')
         res.status(200).json(geography);
       })
       .catch(error => {
+        console.log(error);
         res.status(400).send("unable to save to database");
       })
   });
@@ -41,12 +42,14 @@ geographyRoutes.route('/update/:id')
         // Update
         geography.name = req.body.name;
 
-        geography.save().then(geography => {
-          res.status(200).json('Update complete');
-        })
-        .catch(error => {
-          res.status(400).send("unable to update the database");
-        });
+        geography.save()
+          .then(geography => {
+            res.status(200).json('Update complete');
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(400).send("unable to update the database");
+          });
       }
     });
   });
