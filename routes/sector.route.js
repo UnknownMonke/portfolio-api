@@ -14,7 +14,7 @@ sectorRoutes.route('/get')
       } else {
         res.json(sectors);
       }
-    })
+    });
   });
 
 // Ajout secteur majeur ou mineur

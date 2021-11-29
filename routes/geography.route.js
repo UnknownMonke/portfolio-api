@@ -13,7 +13,7 @@ geographyRoutes.route('/get')
       } else {
         res.json(geographies);
       }
-    })
+    });
   });
 
 geographyRoutes.route('/add')
@@ -27,7 +27,7 @@ geographyRoutes.route('/add')
       .catch(error => {
         console.log(error);
         res.status(400).send("unable to save to database");
-      })
+      });
   });
 
 geographyRoutes.route('/update/:id')
@@ -42,7 +42,7 @@ geographyRoutes.route('/update/:id')
         // Update
         geography.name = req.body.name;
 
-        geography.save()
+        geography.save() // Save crée le document ou l'update s'il existe déjà (document.isNew)
           .then(geography => {
             res.status(200).json('Update complete');
           })
