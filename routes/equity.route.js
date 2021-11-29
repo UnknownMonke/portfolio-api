@@ -16,6 +16,17 @@ equityRoutes.route('/get')
     })
   });
 
+equityRoutes.route('/get/:id')
+  .get(function(req, res) {
+    Equity.findById(req.params.id, function(error, equity) {
+      if(error) {
+        console.log(error);
+      } else {
+        res.json(equity);
+      }
+    })
+  });
+
 // Ne retourne rien car l'id est gérée côté client
 equityRoutes.route('/add')
   .post(function(req, res) {
