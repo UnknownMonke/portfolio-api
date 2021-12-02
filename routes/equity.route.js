@@ -70,7 +70,7 @@ equityRoutes.route('/update')
           });
 
           updatedEquities.save()
-            .then(sector => {
+            .then(equity => {
               res.status(200).json('Update complete');
             })
             .catch(error => {
@@ -78,6 +78,33 @@ equityRoutes.route('/update')
               res.status(400).send("unable to update the database");
             });
         }
+      }
+    });
+  });
+
+// Update une equité unique, seulement l'exposure
+equityRoutes.route('/update/:id')
+  .post(function (req, res) {
+    Equity.findById(req.params.id, function(error, equity) {
+      if(error) {
+        console.log(error);
+        res.status(500).json(error);
+
+      } else if(!equity) {
+        res.status(404).send("Record not found");
+
+      } else {
+        equity.geography = req.body.geography;
+        equity.sectors = req.body.sectors;
+
+        equity.save()
+          .then(equity => {
+            res.status(200).json('Update complete');
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(400).send("unable to update the database");
+          });
       }
     });
   });

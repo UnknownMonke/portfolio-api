@@ -15,7 +15,8 @@ let Equity = new Schema({
       geography:
         {
           _id: String,
-          name: String
+          name: String,
+          __v: Number
         },
       exposure: Number
     }
@@ -26,6 +27,7 @@ let Equity = new Schema({
         {
           _id: Number,
           name: String,
+          __v: Number
         },
       exposure: Number
     }
