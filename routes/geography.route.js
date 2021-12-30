@@ -44,7 +44,7 @@ geographyRoutes.route('/update/:id')
 
         geography.save() // Save crée le document ou l'update s'il existe déjà (document.isNew)
           .then(geography => {
-            res.status(200).json('Update complete');
+            res.status(200).send('Update complete');
           })
           .catch(error => {
             console.log(error);
@@ -61,7 +61,7 @@ geographyRoutes.route('/delete/:id')
           console.log(error);
           res.status(500).json(error);
         } else {
-          res.status(200).json('Successfully removed');
+          res.status(200).send('Successfully removed');
         }
     });
   });

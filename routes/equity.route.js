@@ -37,7 +37,7 @@ equityRoutes.route('/add')
 
       Equity.insertMany(equities) // Persistence
         .then(equity => {
-          res.status(200);
+          res.status(200).send('add successful');
         })
         .catch(error => {
           console.log(error);
@@ -51,38 +51,49 @@ equityRoutes.route('/update')
   .post(function (req, res) {
     const updatedEquities = [];
 
-    Equity.find({
-      '_id': { $in: req.body.map(equity => equity._id) }, // Objet d'entrée: Equity sans les répartitions
+    Equity.find(
+      {
+        '_id': { $in: req.body.map(equity => equity._id) } // Objet d'entrée: Equity sans les répartitions
+      },
       function(error, equities) {
         if(error) {
           console.log(error);
           res.status(500).json(error);
+
         } else if(!equities) {
           res.status(404).send("Record not found");
+
         } else {
           equities.forEach(equity => {
-            const correspondingEquityRaw = equitiesRaw.filter(el => el._id = equity._id)[0];
+            const correspondingEquityRaw = req.body.filter(el => el._id === equity._id)[0];
 
             for(const property in correspondingEquityRaw) {
-              equity[property] = correspondingEquityRaw[property];
+              equity[property] = correspondingEquityRaw[property]; //TODO risque de shallow copy
             }
             updatedEquities.push(equity);
           });
 
-          updatedEquities.save()
-            .then(equity => {
-              res.status(200).json('Update complete');
-            })
-            .catch(error => {
-              console.log(error);
-              res.status(400).send("unable to update the database");
-            });
+          let saveError = false;
+
+          updatedEquities.forEach(equity =>
+            equity.save()
+              .catch(error => {
+                console.log(error);
+                saveError = true;
+              })
+          );
+
+          if(saveError) {
+            res.status(400).send("unable to update the database");
+          } else {
+            res.status(200).send('Update complete');
+          }
         }
-      }
-    });
+      });
   });
 
 // Update une equité unique, seulement l'exposure
+//TODO put
 equityRoutes.route('/update/:id')
   .post(function (req, res) {
     Equity.findById(req.params.id, function(error, equity) {
