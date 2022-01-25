@@ -1,4 +1,5 @@
 const express = require('express');
+
 const geographyRoutes = express.Router();
 
 // Import du modèle

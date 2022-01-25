@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Entité. L'id est autogénérée
 let Equity = new Schema({
-  _id: String,
   name: String,
   ticker: String,
   type: String,
