@@ -3,7 +3,9 @@ const express = require('express');
 const geographyRoutes = express.Router();
 
 // Import du modèle
+let Counter = require('../models/counter');
 let Geography = require('../models/geography');
+let Repartition = require('../models/Repartition');
 
 // L'entrée de l'API est relative au préfixe global défini dans le server.js
 geographyRoutes.route('/get')
@@ -19,15 +21,21 @@ geographyRoutes.route('/get')
 
 geographyRoutes.route('/add')
   .post(function(req, res) {
-    let geography = new Geography(req.body);
+    Counter.findByIdAndUpdate('geographyId', { $inc: { value: 1 } }, { new: 'true' })
+      .then(result => {
+        const geography = new Geography({
+          _id: result.value,
+          name: req.body.name,
+        });
 
-    geography.save() // Persistence
-      .then(geography => {
-        res.status(200).json(geography);
-      })
-      .catch(error => {
-        console.log(error);
-        res.status(400).send("unable to save to database");
+        geography.save() // Persistence
+          .then(geography => {
+            res.status(200).json(geography);
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(400).send("unable to save to database");
+          });
       });
   });
 
@@ -43,9 +51,11 @@ geographyRoutes.route('/update/:id')
         // Update
         geography.name = req.body.name;
 
+        //TODO variable shadowing, use promises or await async
+
         geography.save() // Save crée le document ou l'update s'il existe déjà (document.isNew)
           .then(geography => {
-            res.status(200).send('Update complete');
+            res.status(200).json('Update complete');
           })
           .catch(error => {
             console.log(error);
@@ -62,7 +72,17 @@ geographyRoutes.route('/delete/:id')
           console.log(error);
           res.status(500).json(error);
         } else {
-          res.status(200).send('Successfully removed');
+          res.status(200).json('Successfully removed');
+          //Remove geography in all repartitions
+          /*Repartition.deleteMany({ type: 'Geo', exposureId: req.params.id }, function(error) {
+            if(error) {
+              console.log(error);
+              res.status(500).json(error);
+
+            } else {
+              res.status(200).json('Successfully removed');
+            }
+          });*/
         }
     });
   });

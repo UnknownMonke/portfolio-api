@@ -37,7 +37,7 @@ equityRoutes.route('/add')
 
       Equity.insertMany(equities) // Persistence
         .then(equity => {
-          res.status(200).send('add successful');
+          res.status(200).json('add successful');
         })
         .catch(error => {
           console.log(error);
@@ -46,7 +46,7 @@ equityRoutes.route('/add')
     }
   });
 
-// Update uniquement une array d'entités, n'update pas les expositions
+// Update uniquement une array d'entités, n'update pas les exposures
 equityRoutes.route('/update')
   .post(function (req, res) {
     const updatedEquities = [];
@@ -116,6 +116,19 @@ equityRoutes.route('/update/:id')
             console.log(error);
             res.status(400).send("unable to update the database");
           });
+      }
+    });
+  });
+
+  equityRoutes.route('/delete/all')
+  .delete(function (req, res) {
+    Equity.deleteMany({}, function(error) {
+      if(error) {
+        console.log(error);
+        res.status(500).json(error);
+
+      } else {
+        res.status(200).json('Update complete');
       }
     });
   });

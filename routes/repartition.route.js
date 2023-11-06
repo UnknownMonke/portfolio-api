@@ -1,56 +1,56 @@
 const express = require('express');
 
-const sectorRoutes = express.Router();
+const repartitionRoutes = express.Router();
+//TODO
 
 // Import du modèle
 let Counter = require('../models/counter');
-let Sector = require('../models/Sector');
+let Repartition = require('../models/Repartition');
 
-sectorRoutes.route('/get')
+// Find all repartition for given equity
+repartitionRoutes.route('/get/:id')
   .get(function(req, res) {
-    Sector.find(function(error, sectors) {
+    Repartition.find({ equityid: req.params.id }, function(error, rep) {
       if(error) {
         console.log(error);
       } else {
-        res.json(sectors);
+        res.json(rep);
       }
     });
   });
 
-// Ajout secteur majeur ou mineur
-sectorRoutes.route('/add')
+// Add repartitions for a given equity and given type (geo or sector)
+repartitionRoutes.route('/add')
   .post(function(req, res) {
 
-    Counter.findByIdAndUpdate('sectorId', { $inc: { value: 1 } }, { new: 'true' })
-      .then(result => {
-        const sector = new Sector({
-          _id: result.value,
-          name: req.body.name,
-          level: req.body.level,
-          parentId: req.body.parentId,
-        });
+    const sector = new Sector({
+      _id: result.value,
+      name: req.body.name,
+      level: req.body.level,
+      parentId: req.body.parentId,
+    });
 
-        sector.save() // Persistence
-          .then(sector => {
-            res.status(200).json(sector);
-          })
-          .catch(error => {
-            console.log(error);
-            res.status(400).send("unable to save to database");
-          });
+    sector.save()
+      .then(sector => {
+        res.status(200).json(sector);
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(400).send("unable to save to database");
       });
+
   });
 
 sectorRoutes.route('/update/:id')
   .post(function (req, res) {
-    Sector.findById(req.params.id, function(error, sector) { // id = paramètre de la requête et non id contenue dans le body
+    Sector.findById(req.params.id, function(error, sector) {
       if(error) {
         console.log(error);
         res.status(500).json(error);
       } else if(!sector) {
         res.status(404).send("Record not found");
       } else {
-        // Update
+
         sector.name = req.body.name;
 
         sector.save()
@@ -77,17 +77,8 @@ sectorRoutes.route('/delete/:id')
             sects.forEach(s => Sector.findByIdAndRemove({ _id: s._id}, function(err, sects){
 
             }));
-            res.status(200).json('Successfully removed');
-            //Remove sector in all repartitions
-            /*Repartition.deleteMany({ type: 'Sec', exposureId: { $in: sects.map(s => s._id) } }, function(error) {
-              if(error) {
-                console.log(error);
-                res.status(500).json(error);
 
-              } else {
-                res.status(200).json('Successfully removed');
-              }
-            });*/
+            res.status(200).json('Successfully removed');
           })
         }
     });

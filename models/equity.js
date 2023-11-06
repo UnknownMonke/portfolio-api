@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Entité. L'id est autogénérée
+
 let Equity = new Schema({
+  _id: String,
+  brokerId: String,
   name: String,
   ticker: String,
   type: String,
@@ -10,28 +12,16 @@ let Equity = new Schema({
   currency: String,
   quantity: Number,
   amount: Number,
-  geography: [
-    {
-      geography:
-        {
-          _id: String,
-          name: String,
-          __v: Number
-        },
-      exposure: Number
-    }
-  ],
-  sectors: [
-    {
-      sector:
-        {
-          _id: Number,
-          name: String,
-          __v: Number
-        },
-      exposure: Number
-    }
-  ]
+  source: String,
+  markForUpdate: Boolean,
+  geographyExposure: [{
+    geographyId: Number,
+    exposure: Number
+  }],
+  SectorExposure: [{
+    sectorId: Number,
+    exposure: Number
+  }]
 },{
   collection: 'Equity'
 });
